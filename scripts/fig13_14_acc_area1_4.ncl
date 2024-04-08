@@ -21,8 +21,8 @@ begin
 
   mon=5
   narea=0
-  narea=1  ;Fig.13
   narea=2  ;Fig.14
+  narea=1  ;Fig.13
   path1 = "/scratch2/BMC/gsd-fv3-dev/sun/post_p8_f90/acc_3var/"
 
   sfcdata1= "acc_noa0_t2m_"+sprinti("%0.2i",mon)+".nc"
@@ -159,45 +159,45 @@ begin
   res@gsnCenterString = "T2m NoAer wk34"
   plot(1) = gsn_csm_contour_map(wks,t15,res)
 
-  res@gsnCenterString = "Prcp NoAer wk1"
-  plot(2) = gsn_csm_contour_map(wks,p11,res)
-  res@gsnCenterString = "Prcp NoAer wk34"
-  plot(3) = gsn_csm_contour_map(wks,p15,res)
-
   res@gsnCenterString = "H500 NoAer wk1"
-  plot(4) = gsn_csm_contour_map(wks,h11,res)
+  plot(2) = gsn_csm_contour_map(wks,h11,res)
   res@gsnCenterString = "H500 NoAer wk34"
-  plot(5) = gsn_csm_contour_map(wks,h15,res)
+  plot(3) = gsn_csm_contour_map(wks,h15,res)
+
+  res@gsnCenterString = "Prcp NoAer wk1"
+  plot(4) = gsn_csm_contour_map(wks,p11,res)
+  res@gsnCenterString = "Prcp NoAer wk34"
+  plot(5) = gsn_csm_contour_map(wks,p15,res)
 
   res@gsnCenterString = "T2m ClimAer wk1"
   plot(6) = gsn_csm_contour_map(wks,t21,res)
   res@gsnCenterString = "T2m ClimAer wk34"
   plot(7) = gsn_csm_contour_map(wks,t25,res)
 
-  res@gsnCenterString = "Prcp ClimAer wk1"
-  plot(8) = gsn_csm_contour_map(wks,p21,res)
-  res@gsnCenterString = "Prcp ClimAer wk34"
-  plot(9) = gsn_csm_contour_map(wks,p25,res)
-
   res@gsnCenterString = "H500 ClimAer wk1"
-  plot(10) = gsn_csm_contour_map(wks,h21,res)
+  plot(8) = gsn_csm_contour_map(wks,h21,res)
   res@gsnCenterString = "H500 ClimAer wk34"
-  plot(11) = gsn_csm_contour_map(wks,h25,res)
+  plot(9) = gsn_csm_contour_map(wks,h25,res)
+
+  res@gsnCenterString = "Prcp ClimAer wk1"
+  plot(10) = gsn_csm_contour_map(wks,p21,res)
+  res@gsnCenterString = "Prcp ClimAer wk34"
+  plot(11) = gsn_csm_contour_map(wks,p25,res)
 
   res@gsnCenterString = "T2m ProgAer wk1"
   plot(12) = gsn_csm_contour_map(wks,t31,res)
   res@gsnCenterString = "T2m ProgAer wk34"
   plot(13) = gsn_csm_contour_map(wks,t35,res)
 
-  res@gsnCenterString = "Prcp ProgAer wk1"
-  plot(14) = gsn_csm_contour_map(wks,p31,res)
-  res@gsnCenterString = "Prcp ProgAer wk34"
-  plot(15) = gsn_csm_contour_map(wks,p35,res)
-
   res@gsnCenterString = "H500 ProgAer wk1"
-  plot(16) = gsn_csm_contour_map(wks,h31,res)
+  plot(14) = gsn_csm_contour_map(wks,h31,res)
   res@gsnCenterString = "H500 ProgAer wk34"
-  plot(17) = gsn_csm_contour_map(wks,h35,res)
+  plot(15) = gsn_csm_contour_map(wks,h35,res)
+
+  res@gsnCenterString = "Prcp ProgAer wk1"
+  plot(16) = gsn_csm_contour_map(wks,p31,res)
+  res@gsnCenterString = "Prcp ProgAer wk34"
+  plot(17) = gsn_csm_contour_map(wks,p35,res)
 
   resP                  = True                   ; modify the panel plot
   resP@gsnPanelLabelBar = True                  ; add common colorbar
