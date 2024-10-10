@@ -1,3 +1,15 @@
+;---------------------------------------------------------------
+;  NCL User Guide Example: NUG_triangular_grid_ICON.ncl
+;
+;  Grid type:         ICON - Unstructured grid
+;
+;  Settings:          sub-region,
+;                     manual-levels,
+;                     draw colored triangles with outlines,
+;                     don't draw missing values
+;  KMF 31.10.14
+;---------------------------------------------------------------
+
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_code.ncl"
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_csm.ncl"
 
@@ -34,16 +46,16 @@ begin
    lon1=0;
    lon2=359;
   else
-   lat1=60;
-   lat2=120;
+   lat1=30
+   lat2=149
    lon1=0;
-   lon2=60;
+   lon2=359;
   end if
 
   ymin=0
   ymax=1
   first=1
-  rad = 4.0*atan(1.0)/180.0
+  rad    = 4.0*atan(1.0)/180.0
   nn=0
   do mon=mo1,mo2,dmo
     if (mon.eq.5) then
@@ -55,7 +67,6 @@ begin
     patha=pth_chm
     pathb=pth_clim
     pathc=pth_ctrl0
-
   do yr=yr1,yr2
     if (yr.eq.9999) then
       modis="MODIS_"+amon+"_2003_2019_ave.nc"
@@ -69,6 +80,7 @@ begin
     fin1= addfile(patha+sfcdata1,"r");
    ;fin2= addfile(pathb+sfcdata1,"r");
    ;fin3= addfile(pathc+sfcdata1,"r");
+    printVarSummary(fin1)
     lona=fin1->lon(lon1:lon2);
     lata=fin1->lat(lat1:lat2);
     clat  = cos(lata*rad)
@@ -95,11 +107,13 @@ begin
       latb=fin02->lat(:);
       clat2 = cos(latb*rad)
     else
-      x90=fin0->MYD08_D3_6_1_AOD_550_Dark_Target_Deep_Blue_Combined_Mean(lat1:lat2,lon1+180:lon2+180); monthly
+      x90=fin01->MYD08_D3_6_1_AOD_550_Dark_Target_Deep_Blue_Combined_Mean(lat1:lat2,lon1+180:lon2+180); monthly
       modis_file="/scratch2/BMC/gsd-fv3-test/Shan.Sun/wgne_chem_exp/glb_aod/aod_gl_modis_2003_2019_"+sprinti("%0.2i",mon)+"_sht.txt"
     end if
     modis_aod_ave=asciiread(modis_file,(/17/),"float")
     x91=fin1->maod(ncrec4,lat1:lat2,lon1:lon2); monthly
+
+    fin1= addfile(pathb+sfcdata1,"r");
     x93=fin1->maod(ncrec4,lat1:lat2,lon1:lon2); monthly
 
     x90@_FillValue = -9999
@@ -118,10 +132,15 @@ begin
    print("ave_x0="+ave_x0+" ave_x1="+ave_x1+" ave_x2="+ave_x2+" ave_x3="+ave_x3)
 
   if (first.eq.1) then
+    wks_type = "png"
+    wks_type@wkWidth = 2500
+    wks_type@wkHeight = 2500
    ;wks = gsn_open_wks("x11", "contour_map")   ;-- open a workstation
-    wks = gsn_open_wks("png",get_script_prefix_name())
+   ;wks = gsn_open_wks("png",get_script_prefix_name())
+   ;wks = gsn_open_wks("eps",get_script_prefix_name())
+    wks = gsn_open_wks(wks_type,get_script_prefix_name())
     if (do_aod.eq.1) then
-      plot = new(6,graphic) ; create a plot panel
+      plot = new(8,graphic) ; create a plot panel
     else
       plot = new(8,graphic) ; create a plot panel
     end if
@@ -135,7 +154,7 @@ begin
     res@cnFillOn            = True             ; turn on color
     res@mpFillOn            = False             ; turn on color
     res@mpOutlineOn = True 
-    res@cnFillPalette     = "nrl_sirkes"
+    res@cnFillPalette     = "nrl_sirkes";"temp_diff_18lev"; "precip3_16lev"; "sunshine_9lev"; "temp_diff_18lev"; "ncl_default"   ; define color map for contours
     res@lbLabelBarOn      = True
     if (do_aod.eq.1) then
       res@lbLabelBarOn    = False
@@ -143,30 +162,37 @@ begin
     if (bias.eq.0) then
       res@lbLabelBarOn    = False
     end if
-    res@lbLabelFontHeightF  = 0.03   ; make labels smaller
+    res@lbLabelFontHeightF  = 0.025   ; make labels smaller
     res@cnLinesOn         = False    ; turn off contour lines
     res@cnLineLabelsOn    = False    ; turn off line labels
    ;res@tiMainString      = ""
     res@gsnLeftString = ""
     res@gsnRightString = ""
 
+    res@mpMinLatF = -60
+    res@mpMaxLatF =  60
 ;   without these, the map starts at 180E. Otherwise it would start at 0E.
-;   res@mpMinLatF    = lat1-90;
-;   res@mpMaxLatF    = lat2-90;
-;   res@mpMinLonF    = lon1
-;   res@mpMaxLonF    = lon2
+;   res@mpMinLonF = lon1
+;   res@mpMaxLonF = lon2
 
-    res@gsnCenterStringFontHeightF = 0.030
-    res@gsnRightStringFontHeightF = 0.030
+    res@gsnCenterStringFontHeightF = 0.028
+    res@gsnRightStringFontHeightF = 0.028
   ; res@cnLevelSelectionMode = "ManualLevels"
     res@cnLevelSelectionMode = "ExplicitLevels"
 
-    if (yr.lt.9999) then
-      res@gsnCenterString = amon+sprinti("%0.4i",yr)+var+obs1
-    else
-      res@gsnCenterString = amon+obs1  ; +var+obs
-    end if
+  if (yr.lt.9999) then
+    res@gsnCenterString = amon+sprinti("%0.4i",yr)+var+obs1
+  else
+    res@gsnCenterString = amon+obs1  ; +var+obs
+  end if
 
+  ; res@cnFillPalette        = "sunshine_9lev"     ; set color map
+  ; res@cnMinLevelValF       = 0.1                  ; min level
+  ; res@cnMaxLevelValF       = 1.2                 ; max level
+  ; res@cnLevelSpacingF      = .1                  ; contour level spacing
+
+    res@mpProjection = "Mollweide"
+    res@mpProjection = "Robinson"
     res@cnFillPalette  = "precip3_16lev"
     res@cnLevels    = (/.1,.2,.3,.4,.5,.6,.7,.8,.9/)   ; AOD
     res@cnFillColors= (/-1,1,2,4,6,8,10,12,14,16/)
@@ -181,7 +207,11 @@ begin
     res@gsnCenterString = amon+" ProgAer"
     res@gsnRightString = sprintf("%4.2f",ave_x1)
     plot(nn+2) = gsn_csm_contour_map(wks,x91,res)
-    nn=nn+3
+
+    res@gsnCenterString = amon+" ClimAer"
+    res@gsnRightString = sprintf("%4.2f",ave_x3)
+    plot(nn+3) = gsn_csm_contour_map(wks,x93,res)
+    nn=nn+4
 
   end do ;yr
   end do ;mo
@@ -189,20 +219,17 @@ begin
 ;************************************************
 ; create panel
 ;************************************************
-    resP                  = True                   ; modify the panel plot
-    resP@gsnPanelLabelBar = False                   ; add common colorbar
-    resP@gsnPanelMainFontHeightF = 0.020
-    resP@gsnPanelMainFontHeightF = 0.012
+  resP                  = True                   ; modify the panel plot
+  resP@gsnPanelLabelBar = False                   ; add common colorbar
+ ;resP@gsnPanelBottom   = 0.05                   ; add space at bottom
+ ;resP@gsnPanelFigureStrings= (/"a)","b)","c)"/) ; add strings to panel
+ ;resP@amJust   = "TopLeft"
+    resP@gsnPanelMainFontHeightF = 0.015
+    resP@gsnPanelLabelBar = True                   ; add common colorbar
+    resP@lbLabelFontHeightF  = 0.007   ; not working, default=0.02
     resP@gsnPanelMainString = var+"Monthly Mean 2003-2019 "
     if (do_aod.eq.1) then
-      resP@gsnPanelLabelBar = True                   ; add common colorbar
-    end if
-    if (bias.eq.0) then
-      resP@gsnPanelLabelBar = True                   ; add common colorbar
-    end if
-    resP@lbLabelFontHeightF  = 0.015               ; make labels smaller
-    if (do_aod.eq.1) then
-      gsn_panel(wks,plot,(/2,3/),resP)               ; now draw as one plot
+      gsn_panel(wks,plot,(/2,4/),resP)               ; now draw as one plot
     else
       gsn_panel(wks,plot,(/2,4/),resP)               ; now draw as one plot
     end if

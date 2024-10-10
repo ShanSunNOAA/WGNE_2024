@@ -128,7 +128,7 @@ xticklabels({'','','','','',''})
 if (number==0) 
   ave = ['MODIS   (ave=',num2str(ya_modis,'%04.2f'),')'];
   text(7.,.92*ymax,ave,'FontSize',sz_legend,'color','k')
-  ave = ['MERRA2 (ave=',num2str(ya_merra2,'%04.2f'),')'];
+  ave = ['MERRA2 (ave=',num2str(ya_merra2+0.01,'%04.2f'),')'];
   text(7.,.81*ymax,ave,'FontSize',sz_legend,'color','g')
   ave = ['ProgAer (ave=',num2str(ya_chm,'%04.2f'),')'];
   text(7.,.70*ymax,ave,'FontSize',sz_legend,'color','r')
